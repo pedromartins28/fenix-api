@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['exam_id', 'student_id', 'taken_at', 'correct_answers_count', 'score'])]
+#[Fillable(['exam_id', 'student_id', 'started_at', 'finished_at', 'correct_answers_count', 'score'])]
 class ExamAttempt extends Model
 {
     public $timestamps = false;
@@ -15,7 +15,8 @@ class ExamAttempt extends Model
     protected function casts(): array
     {
         return [
-            'taken_at' => 'date',
+            'started_at' => 'datetime',
+            'finished_at' => 'datetime',
             'correct_answers_count' => 'integer',
             'score' => 'decimal:2',
         ];

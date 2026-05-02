@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreignId('student_id')
                 ->constrained('students')
                 ->restrictOnDelete();
-            $table->date('taken_at')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('finished_at')->nullable();
             $table->unsignedInteger('correct_answers_count')->nullable();
             $table->decimal('score', 8, 2)->nullable();
 

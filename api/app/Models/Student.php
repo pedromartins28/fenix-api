@@ -26,7 +26,7 @@ class Student extends Model
     public function exams(): BelongsToMany
     {
         return $this->belongsToMany(Exam::class, 'exam_attempts')
-            ->withPivot(['taken_at', 'score']);
+            ->withPivot(['started_at', 'finished_at', 'correct_answers_count', 'score']);
     }
 
     public function examAttempts(): HasMany

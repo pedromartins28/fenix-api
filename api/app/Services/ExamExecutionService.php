@@ -25,6 +25,8 @@ class ExamExecutionService
 
                 return [
                     ...$this->formatExamSummary($exam),
+                    'started_at' => $attempt?->started_at,
+                    'finished_at' => $attempt?->finished_at,
                     'correct_answers_count' => $attempt?->correct_answers_count,
                     'score' => $attempt?->score,
                 ];
@@ -41,6 +43,8 @@ class ExamExecutionService
 
         return [
             ...$this->formatExamSummary($exam),
+            'started_at' => $attempt?->started_at,
+            'finished_at' => $attempt?->finished_at,
             'correct_answers_count' => $attempt?->correct_answers_count,
             'score' => $attempt?->score,
         ];
@@ -59,7 +63,7 @@ class ExamExecutionService
         $attempt = ExamAttempt::create([
             'exam_id' => $exam->id,
             'student_id' => $student->id,
-            'taken_at' => now()->toDateString(),
+            'started_at' => now(),
         ])->load(['student']);
 
         $exam->load('questions.options');
@@ -89,7 +93,7 @@ class ExamExecutionService
 
     public function submitAnswers(ExamAttempt $examAttempt, array $answers): ExamAttempt
     {
-        if ($examAttempt->answers()->exists()) {
+        if ($examAttempt->finished_at !== null || $examAttempt->answers()->exists()) {
             throw ValidationException::withMessages([
                 'answers' => 'Answers have already been submitted for this attempt.',
             ]);
@@ -140,8 +144,9 @@ class ExamExecutionService
 
             $score = ($correctAnswers / $questionsById->count()) * (float) $examAttempt->exam->value;
             $examAttempt->update([
+                'finished_at' => now(),
                 'correct_answers_count' => $correctAnswers,
-                'score' => round($score, 2)
+                'score' => round($score, 2),
             ]);
 
             return $examAttempt->load(['exam', 'answers.examQuestionOption']);
@@ -184,7 +189,8 @@ class ExamExecutionService
             'id' => $attempt->id,
             'exam_id' => $attempt->exam_id,
             'student_id' => $attempt->student_id,
-            'taken_at' => $attempt->taken_at,
+            'started_at' => $attempt->started_at,
+            'finished_at' => $attempt->finished_at,
             'correct_answers_count' => $attempt->correct_answers_count,
             'score' => $attempt->score,
             'student' => $attempt->student,
