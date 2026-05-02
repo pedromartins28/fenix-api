@@ -8,7 +8,6 @@ use App\Models\ExamAttempt;
 use App\Models\Student;
 use App\Services\ExamExecutionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class ExamExecutionController extends Controller
 {

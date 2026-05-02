@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $classA = ClassGroup::firstOrCreate(['code' => 'CLASS-A']);
-        ClassGroup::firstOrCreate(['code' => 'CLASS-B']);
+        $classB = ClassGroup::firstOrCreate(['code' => 'CLASS-B']);
 
         User::updateOrCreate(
             ['email' => 'teacher@gmail.com'],
@@ -31,20 +31,43 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $studentUser = User::updateOrCreate(
-            ['email' => 'student@gmail.com'],
+        $students = [
             [
                 'name' => 'Student User',
-                'password' => Hash::make('student123'),
-            ]
-        );
-
-        Student::firstOrCreate(
-            ['user_id' => $studentUser->id],
-            [
-                'name' => 'Student User',
+                'email' => 'student@gmail.com',
+                'password' => 'student123',
                 'class_group_id' => $classA->id,
-            ]
-        );
+            ],
+            [
+                'name' => 'Student Two',
+                'email' => 'student2@gmail.com',
+                'password' => 'student123',
+                'class_group_id' => $classA->id,
+            ],
+            [
+                'name' => 'Student Three',
+                'email' => 'student3@gmail.com',
+                'password' => 'student123',
+                'class_group_id' => $classB->id,
+            ],
+        ];
+
+        foreach ($students as $studentData) {
+            $studentUser = User::updateOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'name' => $studentData['name'],
+                    'password' => Hash::make($studentData['password']),
+                ]
+            );
+
+            Student::updateOrCreate(
+                ['user_id' => $studentUser->id],
+                [
+                    'name' => $studentData['name'],
+                    'class_group_id' => $studentData['class_group_id'],
+                ]
+            );
+        }
     }
 }
