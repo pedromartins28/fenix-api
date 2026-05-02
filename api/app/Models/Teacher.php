@@ -7,20 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['id_user', 'nome'])]
-class Professor extends Model
+#[Fillable(['user_id', 'name'])]
+class Teacher extends Model
 {
-    protected $table = 'professores';
-
     public $timestamps = false;
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->belongsTo(User::class);
     }
 
-    public function turmas(): BelongsToMany
+    public function classGroups(): BelongsToMany
     {
-        return $this->belongsToMany(Turma::class, 'professor_turma', 'id_professor', 'id_turma');
+        return $this->belongsToMany(ClassGroup::class);
     }
 }

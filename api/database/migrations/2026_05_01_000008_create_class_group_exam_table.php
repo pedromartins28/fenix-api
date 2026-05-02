@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alunos', function (Blueprint $table) {
+        Schema::create('class_group_exam', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_user')
-                ->constrained('users')
+            $table->foreignId('class_group_id')
+                ->constrained('class_groups')
                 ->restrictOnDelete();
-            $table->string('nome');
-            $table->foreignId('id_turma')
-                ->constrained('turmas')
+            $table->foreignId('exam_id')
+                ->constrained('exams')
                 ->restrictOnDelete();
+
+            $table->unique(['class_group_id', 'exam_id']);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('alunos');
+        Schema::dropIfExists('class_group_exam');
     }
 };

@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prova_aluno', function (Blueprint $table) {
+        Schema::create('exam_student', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_aluno')
-                ->constrained('alunos')
+            $table->foreignId('exam_id')
+                ->constrained('exams')
                 ->restrictOnDelete();
-            $table->foreignId('id_prova')
-                ->constrained('provas')
+            $table->foreignId('student_id')
+                ->constrained('students')
                 ->restrictOnDelete();
-            $table->date('data_realizacao')->nullable();
-            $table->decimal('nota', 8, 2)->nullable();
+            $table->date('taken_at')->nullable();
+            $table->decimal('score', 8, 2)->nullable();
 
-            $table->unique(['id_aluno', 'id_prova']);
+            $table->unique(['exam_id', 'student_id']);
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prova_aluno');
+        Schema::dropIfExists('exam_student');
     }
 };

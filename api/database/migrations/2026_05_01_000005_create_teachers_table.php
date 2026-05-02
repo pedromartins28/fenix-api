@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prova_questoes', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_prova')
-                ->constrained('provas')
-                ->cascadeOnDelete();
-            $table->text('enunciado');
-            $table->unsignedInteger('ordem');
-
-            $table->unique(['id_prova', 'ordem']);
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->string('name');
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prova_questoes');
+        Schema::dropIfExists('teachers');
     }
 };

@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prova_questao_alternativas', function (Blueprint $table) {
+        Schema::create('class_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_prova_questao')
-                ->constrained('prova_questoes')
-                ->cascadeOnDelete();
-            $table->text('descricao');
-            $table->boolean('is_correta');
+            $table->string('code');
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prova_questao_alternativas');
+        Schema::dropIfExists('class_groups');
     }
 };

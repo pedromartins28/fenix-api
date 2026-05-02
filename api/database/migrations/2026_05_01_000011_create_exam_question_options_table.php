@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('turmas', function (Blueprint $table) {
+        Schema::create('exam_question_options', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo');
+            $table->foreignId('exam_question_id')
+                ->constrained('exam_questions')
+                ->cascadeOnDelete();
+            $table->text('description');
+            $table->boolean('is_correct');
         });
     }
 
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('turmas');
+        Schema::dropIfExists('exam_question_options');
     }
 };

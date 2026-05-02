@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('provas', function (Blueprint $table) {
+        Schema::create('exam_questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('num_questoes');
-            $table->decimal('valor', 8, 2);
+            $table->foreignId('exam_id')
+                ->constrained('exams')
+                ->cascadeOnDelete();
+            $table->text('statement');
+            $table->unsignedInteger('position');
+
+            $table->unique(['exam_id', 'position']);
         });
     }
 
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('provas');
+        Schema::dropIfExists('exam_questions');
     }
 };
