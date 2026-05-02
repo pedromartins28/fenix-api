@@ -85,6 +85,17 @@
                     color="primary"
                     @update:model-value="markCorrect(question, optionIndex)"
                   />
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    color="negative"
+                    icon="delete"
+                    :disable="question.options.length <= 2"
+                    @click="removeOption(question, optionIndex)"
+                  >
+                    <q-tooltip>Remover alternativa</q-tooltip>
+                  </q-btn>
                 </div>
 
                 <q-btn
@@ -177,6 +188,19 @@ function addOption (question) {
   question.options.push({ description: '', is_correct: false })
 }
 
+function removeOption (question, optionIndex) {
+  if (question.options.length <= 2) {
+    return
+  }
+
+  const wasCorrect = question.options[optionIndex].is_correct
+  question.options.splice(optionIndex, 1)
+
+  if (wasCorrect || correctOptionIndex(question) === -1) {
+    question.options[0].is_correct = true
+  }
+}
+
 function correctOptionIndex (question) {
   return question.options.findIndex((option) => option.is_correct)
 }
@@ -233,7 +257,7 @@ async function submitForm () {
 
 .option-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 12px;
   align-items: center;
   margin-bottom: 10px;
