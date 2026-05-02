@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['questions_count', 'value'])]
 class Exam extends Model
@@ -25,7 +26,17 @@ class Exam extends Model
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class)
+        return $this->belongsToMany(Student::class, 'exam_attempts')
             ->withPivot(['taken_at', 'score']);
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ExamQuestion::class);
+    }
+
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
     }
 }

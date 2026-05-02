@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('student_exam_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('exam_student_id')
-                ->constrained('exam_student')
+            $table->foreignId('exam_attempt_id')
+                ->constrained('exam_attempts')
                 ->restrictOnDelete();
             $table->foreignId('exam_question_id')
                 ->constrained('exam_questions')
@@ -23,7 +23,7 @@ return new class extends Migration
                 ->constrained('exam_question_options')
                 ->restrictOnDelete();
 
-            $table->unique(['exam_student_id', 'exam_question_id']);
+            $table->unique(['exam_attempt_id', 'exam_question_id']);
         });
     }
 
