@@ -211,6 +211,7 @@ class ExamExecutionService
     {
         return [
             'id' => $exam->id,
+            'name' => $exam->name,
             'questions_count' => $exam->questions_count,
             'value' => $exam->value,
         ];

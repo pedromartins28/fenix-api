@@ -14,13 +14,15 @@ class ExamService
 
         return DB::transaction(function () use ($data) {
             $exam = Exam::create([
+                'name' => $data['name'],
                 'questions_count' => $data['questions_count'],
                 'value' => $data['value'],
             ]);
 
             $this->syncQuestions($exam, $data['questions']);
+            $exam->classGroups()->sync($data['class_group_ids']);
 
-            return $exam->load('questions.options');
+            return $exam->load(['classGroups:id,code', 'questions.options']);
         });
     }
 
@@ -30,6 +32,7 @@ class ExamService
 
         return DB::transaction(function () use ($exam, $data) {
             $exam->update([
+                'name' => $data['name'],
                 'questions_count' => $data['questions_count'],
                 'value' => $data['value'],
             ]);
@@ -46,7 +49,9 @@ class ExamService
                 $this->syncQuestions($exam, $data['questions']);
             }
 
-            return $exam->load('questions.options');
+            $exam->classGroups()->sync($data['class_group_ids']);
+
+            return $exam->load(['classGroups:id,code', 'questions.options']);
         });
     }
 
