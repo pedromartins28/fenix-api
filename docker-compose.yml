@@ -30,5 +30,18 @@ services:
       - redis
       - db
 
+  web:
+    image: node:22-alpine
+    container_name: fenix_web
+    working_dir: /app
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    ports:
+      - "9000:9000"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
