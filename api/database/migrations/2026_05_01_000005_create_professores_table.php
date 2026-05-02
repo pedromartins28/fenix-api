@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('professores', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_user')
+                ->constrained('users')
+                ->restrictOnDelete();
             $table->string('nome');
         });
     }

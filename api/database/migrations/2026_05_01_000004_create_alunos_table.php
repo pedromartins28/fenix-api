@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('alunos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_user')
+                ->constrained('users')
+                ->restrictOnDelete();
             $table->string('nome');
             $table->foreignId('id_turma')
                 ->constrained('turmas')
