@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['exam_id', 'student_id', 'taken_at', 'score'])]
+#[Fillable(['exam_id', 'student_id', 'taken_at', 'correct_answers_count', 'score'])]
 class ExamAttempt extends Model
 {
     public $timestamps = false;
@@ -16,6 +16,7 @@ class ExamAttempt extends Model
     {
         return [
             'taken_at' => 'date',
+            'correct_answers_count' => 'integer',
             'score' => 'decimal:2',
         ];
     }

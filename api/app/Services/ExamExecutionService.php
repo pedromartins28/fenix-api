@@ -25,6 +25,7 @@ class ExamExecutionService
 
                 return [
                     ...$this->formatExamSummary($exam),
+                    'correct_answers_count' => $attempt?->correct_answers_count,
                     'score' => $attempt?->score,
                 ];
             });
@@ -34,7 +35,15 @@ class ExamExecutionService
     {
         $this->ensureExamIsAvailableForStudent($student, $exam);
 
-        return $this->formatExamSummary($exam);
+        $attempt = $student->examAttempts()
+            ->where('exam_id', $exam->id)
+            ->first();
+
+        return [
+            ...$this->formatExamSummary($exam),
+            'correct_answers_count' => $attempt?->correct_answers_count,
+            'score' => $attempt?->score,
+        ];
     }
 
     public function startAttempt(Student $student, Exam $exam): array
@@ -130,7 +139,10 @@ class ExamExecutionService
             }
 
             $score = ($correctAnswers / $questionsById->count()) * (float) $examAttempt->exam->value;
-            $examAttempt->update(['score' => round($score, 2)]);
+            $examAttempt->update([
+                'correct_answers_count' => $correctAnswers,
+                'score' => round($score, 2)
+            ]);
 
             return $examAttempt->load(['exam', 'answers.examQuestionOption']);
         });
@@ -173,6 +185,7 @@ class ExamExecutionService
             'exam_id' => $attempt->exam_id,
             'student_id' => $attempt->student_id,
             'taken_at' => $attempt->taken_at,
+            'correct_answers_count' => $attempt->correct_answers_count,
             'score' => $attempt->score,
             'student' => $attempt->student,
             'exam' => $this->formatExamForStudent($exam),

@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('students')
                 ->restrictOnDelete();
             $table->date('taken_at')->nullable();
+            $table->unsignedInteger('correct_answers_count')->nullable();
             $table->decimal('score', 8, 2)->nullable();
 
             $table->unique(['exam_id', 'student_id']);
