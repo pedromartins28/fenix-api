@@ -16,6 +16,7 @@ class ExamDashboardRequest extends FormRequest
         return [
             'class_group_id' => ['sometimes', 'integer', 'exists:class_groups,id'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }

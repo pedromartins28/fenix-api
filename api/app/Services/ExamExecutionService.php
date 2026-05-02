@@ -11,6 +11,13 @@ use Illuminate\Validation\ValidationException;
 
 class ExamExecutionService
 {
+    private readonly ExamDashboardService $examDashboardService;
+
+    public function __construct(ExamDashboardService $examDashboardService)
+    {
+        $this->examDashboardService = $examDashboardService;
+    }
+
     public function listAvailableExams(Student $student)
     {
         $attemptsByExamId = $student->examAttempts()
@@ -148,6 +155,8 @@ class ExamExecutionService
                 'correct_answers_count' => $correctAnswers,
                 'score' => round($score, 2),
             ]);
+
+            $this->examDashboardService->forgetDashboardCache($examAttempt->exam_id);
 
             return $examAttempt->load(['exam', 'answers.examQuestionOption']);
         });

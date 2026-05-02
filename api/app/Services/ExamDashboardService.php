@@ -5,14 +5,35 @@ namespace App\Services;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
 class ExamDashboardService
 {
+    private const CACHE_TTL_SECONDS = 300;
+
     public function getDashboard(Exam $exam, array $filters): array
     {
         $this->ensureExamIsAvailableForClassGroup($exam, $filters['class_group_id'] ?? null);
 
+        return Cache::store('redis')
+            ->tags($this->cacheTags($exam))
+            ->remember(
+                $this->cacheKey($exam, $filters),
+                self::CACHE_TTL_SECONDS,
+                fn(): array => $this->buildDashboard($exam, $filters)
+            );
+    }
+
+    public function forgetDashboardCache(int $examId): void
+    {
+        Cache::store('redis')
+            ->tags($this->cacheTagsForExamId($examId))
+            ->flush();
+    }
+
+    private function buildDashboard(Exam $exam, array $filters): array
+    {
         $attemptsQuery = $this->finishedAttemptsQuery($exam, $filters);
         $averageScore = (clone $attemptsQuery)->avg('score');
         $topAttempt = $this->topAttempt($attemptsQuery);
@@ -30,8 +51,30 @@ class ExamDashboardService
             'average_score' => $averageScore !== null ? round((float) $averageScore, 2) : null,
             'top_score' => $topAttempt?->score,
             'top_attempt' => $topAttempt ? $this->formatAttempt($topAttempt) : null,
-            'ranking' => $ranking,
+            'ranking' => $ranking->toArray(),
+            'requested_at' => now()->toISOString(),
         ];
+    }
+
+    private function cacheKey(Exam $exam, array $filters): string
+    {
+        return sprintf(
+            'exam_dashboard:v2:exam_%d:class_group_%s:per_page_%d:page_%d',
+            $exam->id,
+            $filters['class_group_id'] ?? null,
+            (int) ($filters['per_page'] ?? 15),
+            (int) ($filters['page'] ?? 1),
+        );
+    }
+
+    private function cacheTags(Exam $exam): array
+    {
+        return $this->cacheTagsForExamId($exam->id);
+    }
+
+    private function cacheTagsForExamId(int $examId): array
+    {
+        return ['exam-dashboard', "exam-dashboard:exam:$examId"];
     }
 
     private function finishedAttemptsQuery(Exam $exam, array $filters): Builder
@@ -97,8 +140,8 @@ class ExamDashboardService
             ],
             'correct_answers_count' => $attempt->correct_answers_count,
             'score' => $attempt->score,
-            'started_at' => $attempt->started_at,
-            'finished_at' => $attempt->finished_at,
+            'started_at' => $attempt->started_at?->toISOString(),
+            'finished_at' => $attempt->finished_at?->toISOString(),
         ];
     }
 }
