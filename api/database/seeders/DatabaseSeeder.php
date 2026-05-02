@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ClassGroup;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,13 +20,31 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Teacher User',
-            'email' => 'teacher@gmail.com',
-            'password' => Hash::make('teacher123'),
-        ]);
-
-        ClassGroup::firstOrCreate(['code' => 'CLASS-A']);
+        $classA = ClassGroup::firstOrCreate(['code' => 'CLASS-A']);
         ClassGroup::firstOrCreate(['code' => 'CLASS-B']);
+
+        User::updateOrCreate(
+            ['email' => 'teacher@gmail.com'],
+            [
+                'name' => 'Teacher User',
+                'password' => Hash::make('teacher123'),
+            ]
+        );
+
+        $studentUser = User::updateOrCreate(
+            ['email' => 'student@gmail.com'],
+            [
+                'name' => 'Student User',
+                'password' => Hash::make('student123'),
+            ]
+        );
+
+        Student::firstOrCreate(
+            ['user_id' => $studentUser->id],
+            [
+                'name' => 'Student User',
+                'class_group_id' => $classA->id,
+            ]
+        );
     }
 }
