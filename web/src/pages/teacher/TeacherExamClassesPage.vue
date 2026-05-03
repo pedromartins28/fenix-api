@@ -10,11 +10,11 @@
       <q-inner-loading :showing="loading" />
 
       <q-card-section>
-        <p class="eyebrow">Professor</p>
-        <h1>Turmas da prova</h1>
-        <p class="summary">
-          {{ exam ? exam.name || `Prova #${exam.id}` : `Prova #${route.params.examId}` }}
-        </p>
+        <PageHeading
+          eyebrow="Professor"
+          title="Turmas da prova"
+          :subtitle="exam ? exam.name || `Prova #${exam.id}` : `Prova #${route.params.examId}`"
+        />
       </q-card-section>
 
       <q-separator />
@@ -49,6 +49,7 @@
 import { onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { classGroupExamsApi, classGroupsApi, examsApi } from 'src/services/api'
 
 const route = useRoute()
@@ -120,25 +121,6 @@ async function saveLinks () {
   max-width: 760px;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.86);
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
-}
-
-.summary {
-  color: #586761;
 }
 
 .class-grid {

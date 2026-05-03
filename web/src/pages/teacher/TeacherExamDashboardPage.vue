@@ -6,11 +6,12 @@
       {{ errorMessage }}
     </q-banner>
 
-    <div class="page-heading q-mt-md">
-      <p class="eyebrow">Professor</p>
-      <h1>{{ dashboard?.exam?.name || `Dashboard da prova #${route.params.examId}` }}</h1>
-      <p>Resumo de desempenho, melhor pontuação e ranking dos alunos.</p>
-    </div>
+    <PageHeading
+      class="q-mt-md"
+      eyebrow="Professor"
+      :title="dashboard?.exam?.name || `Dashboard da prova #${route.params.examId}`"
+      subtitle="Resumo de desempenho, melhor pontuação e ranking dos alunos."
+    />
 
     <q-card flat bordered class="filters-card">
       <q-card-section>
@@ -135,6 +136,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { classGroupsApi, examDashboardApi } from 'src/services/api'
 
 const route = useRoute()
@@ -226,25 +228,6 @@ function formatDate (value) {
 .page-shell {
   min-height: calc(100vh - 50px);
   background: #f5f1e8;
-}
-
-.page-heading {
-  max-width: 860px;
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0 0 10px;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
 }
 
 .filters-card,

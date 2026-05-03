@@ -1,10 +1,10 @@
 <template>
   <q-page padding class="page-shell">
-    <div class="page-heading">
-      <p class="eyebrow">Aluno</p>
-      <h1>Provas disponíveis</h1>
-      <p>Aluno fixo de teste: <strong>#{{ STUDENT_ID }}</strong></p>
-    </div>
+    <PageHeading
+      eyebrow="Aluno"
+      title="Provas disponíveis"
+      :subtitle="`Aluno #${STUDENT_ID}`"
+    />
 
     <div v-if="loading" class="row q-gutter-md">
       <q-skeleton v-for="item in 3" :key="item" height="180px" class="exam-card" />
@@ -21,19 +21,14 @@
     </div>
 
     <div v-else class="exam-grid">
-      <q-card v-for="exam in exams" :key="exam.id" flat bordered class="exam-card">
-        <q-card-section>
-          <div class="row items-start justify-between q-gutter-sm">
-            <div>
-              <div class="text-caption text-grey-7">Prova #{{ exam.id }}</div>
-              <h2>{{ exam.name || `Prova ${exam.id}` }}</h2>
-            </div>
+      <ExamCard v-for="exam in exams" :key="exam.id" :exam="exam">
+        <template #badge>
+          <q-chip :color="statusMeta(exam).color" text-color="white" dense>
+            {{ statusMeta(exam).label }}
+          </q-chip>
+        </template>
 
-            <q-chip :color="statusMeta(exam).color" text-color="white" dense>
-              {{ statusMeta(exam).label }}
-            </q-chip>
-          </div>
-
+        <template #stats>
           <div class="stats">
             <div>
               <span>Valor</span>
@@ -48,9 +43,9 @@
               <strong>{{ accuracyLabel(exam) }}</strong>
             </div>
           </div>
-        </q-card-section>
+        </template>
 
-        <q-card-actions align="right">
+        <template #actions>
           <q-btn
             v-if="!exam.started_at"
             color="primary"
@@ -75,14 +70,16 @@
             label="Ver resultado"
             :to="`/student/results/${exam.id}`"
           />
-        </q-card-actions>
-      </q-card>
+        </template>
+      </ExamCard>
     </div>
   </q-page>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import ExamCard from 'src/components/ExamCard.vue'
+import PageHeading from 'src/components/PageHeading.vue'
 import { STUDENT_ID } from 'src/config/app'
 import { studentExamsApi } from 'src/services/api'
 
@@ -138,26 +135,6 @@ function formatScore (value) {
   background: #f7f4ec;
 }
 
-.page-heading {
-  max-width: 760px;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0 0 10px;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
-}
-
 .exam-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -166,15 +143,6 @@ h1 {
 
 .exam-card {
   width: 100%;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.exam-card h2 {
-  margin: 4px 0 0;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #17231f;
 }
 
 .stats {

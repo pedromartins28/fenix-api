@@ -2,11 +2,12 @@
   <q-page padding class="page-shell">
     <q-btn flat no-caps icon="arrow_back" label="Voltar" to="/teacher/exams" />
 
-    <div class="page-heading q-mt-md">
-      <p class="eyebrow">Professor</p>
-      <h1>{{ isEditing ? 'Editar prova' : 'Criar prova' }}</h1>
-      <p>Cadastre os dados da prova, monte as questões e selecione as turmas com acesso.</p>
-    </div>
+    <PageHeading
+      class="q-mt-md"
+      eyebrow="Professor"
+      :title="isEditing ? 'Editar prova' : 'Criar prova'"
+      subtitle="Cadastre os dados da prova e monte as questões."
+    />
 
     <q-form class="exam-form" @submit.prevent="submitForm">
       <q-inner-loading :showing="loadingExam" />
@@ -124,6 +125,7 @@
 import { onMounted, reactive, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { examsApi } from 'src/services/api'
 
 const route = useRoute()
@@ -312,13 +314,6 @@ function buildPayload () {
   gap: 12px;
   align-items: center;
   margin-bottom: 10px;
-}
-
-.eyebrow {
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 @media (max-width: 680px) {

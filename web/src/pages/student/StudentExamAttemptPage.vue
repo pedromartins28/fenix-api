@@ -12,10 +12,10 @@
     </div>
 
     <div v-else-if="attempt" class="attempt-shell q-mt-md">
-      <div class="page-heading">
-        <h1>{{ attempt.exam.name || `Prova #${attempt.exam.id}` }}</h1>
-        <p>Responda todas as questões antes de finalizar a prova.</p>
-      </div>
+      <PageHeading
+        :title="attempt.exam.name || `Prova #${attempt.exam.id}`"
+        subtitle="Responda todas as questões antes de finalizar a prova."
+      />
 
       <q-form class="question-stack" @submit.prevent="submitAnswers">
         <q-card
@@ -54,6 +54,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { STUDENT_ID } from 'src/config/app'
 import { examAttemptsApi, studentExamsApi } from 'src/services/api'
 
@@ -126,25 +127,6 @@ async function submitAnswers () {
 
 .attempt-shell {
   max-width: 900px;
-}
-
-.page-heading {
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0 0 10px;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
 }
 
 .question-stack {

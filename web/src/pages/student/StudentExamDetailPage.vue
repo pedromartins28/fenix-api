@@ -10,15 +10,13 @@
       <q-inner-loading :showing="loading" />
 
       <q-card-section v-if="exam">
-        <p class="eyebrow">Aluno</p>
-        <h1>{{ exam.name || `Prova #${exam.id}` }}</h1>
-        <p class="summary">Resumo da prova antes de iniciar. As questões aparecem somente após criar a tentativa.</p>
+        <PageHeading
+          eyebrow="Aluno"
+          :title="exam.name || `Prova #${exam.id}`"
+          subtitle="Inicie a prova para visualizar as questões."
+        />
 
         <div class="stats q-mt-lg">
-          <div>
-            <span>ID</span>
-            <strong>#{{ exam.id }}</strong>
-          </div>
           <div>
             <span>Questões</span>
             <strong>{{ exam.questions_count }}</strong>
@@ -59,6 +57,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { STUDENT_ID } from 'src/config/app'
 import { studentExamsApi } from 'src/services/api'
 
@@ -98,25 +97,6 @@ function formatScore (value) {
   max-width: 760px;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.84);
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
-}
-
-.summary {
-  color: #586761;
 }
 
 .stats {

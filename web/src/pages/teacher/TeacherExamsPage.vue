@@ -1,11 +1,11 @@
 <template>
   <q-page padding class="page-shell">
     <div class="row items-start justify-between q-gutter-md">
-      <div class="page-heading">
-        <p class="eyebrow">Professor</p>
-        <h1>Provas cadastradas</h1>
-        <p>Crie, edite, exclua e acompanhe as provas do sistema.</p>
-      </div>
+      <PageHeading
+        eyebrow="Professor"
+        title="Provas cadastradas"
+        subtitle="Crie, edite, exclua e acompanhe as provas do sistema."
+      />
 
       <q-btn color="primary" unelevated no-caps icon="add" label="Criar prova" to="/teacher/exams/create" />
     </div>
@@ -43,22 +43,8 @@
     </div>
 
     <div v-else class="exam-grid q-mt-lg">
-      <q-card v-for="exam in filteredExams" :key="exam.id" flat bordered class="exam-card">
-        <q-card-section>
-          <div class="text-caption text-grey-7">Prova #{{ exam.id }}</div>
-          <h2>{{ exam.name || `Prova ${exam.id}` }}</h2>
-
-          <div class="stats q-mt-md">
-            <div>
-              <span>Questões</span>
-              <strong>{{ exam.questions_count }}</strong>
-            </div>
-            <div>
-              <span>Valor</span>
-              <strong>{{ formatScore(exam.value) }}</strong>
-            </div>
-          </div>
-
+      <ExamCard v-for="exam in filteredExams" :key="exam.id" :exam="exam">
+        <template #content>
           <div class="q-mt-md">
             <q-chip
               v-for="classGroup in exam.class_groups"
@@ -70,15 +56,15 @@
               {{ classGroup.code }}
             </q-chip>
           </div>
-        </q-card-section>
+        </template>
 
-        <q-card-actions align="right">
-          <q-btn flat dense no-caps color="primary" label="Dashboard" :to="`/teacher/exams/${exam.id}/dashboard`" />
+        <template #actions>
+          <q-btn flat dense no-caps color="primary" label="Métricas" :to="`/teacher/exams/${exam.id}/dashboard`" />
           <q-btn flat dense no-caps color="secondary" label="Turmas" :to="`/teacher/exams/${exam.id}/classes`" />
           <q-btn flat dense no-caps color="primary" label="Editar" :to="`/teacher/exams/${exam.id}/edit`" />
           <q-btn flat dense no-caps color="negative" label="Excluir" @click="deleteExam(exam)" />
-        </q-card-actions>
-      </q-card>
+        </template>
+      </ExamCard>
     </div>
   </q-page>
 </template>
@@ -86,6 +72,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
+import ExamCard from 'src/components/ExamCard.vue'
+import PageHeading from 'src/components/PageHeading.vue'
 import { classGroupsApi, examsApi } from 'src/services/api'
 
 const $q = useQuasar()
@@ -152,35 +140,12 @@ async function deleteExam (exam) {
   }
 }
 
-function formatScore (value) {
-  return Number(value).toFixed(2)
-}
 </script>
 
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
   background: #f5f1e8;
-}
-
-.page-heading {
-  max-width: 760px;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0 0 10px;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
 }
 
 .filter-card {
@@ -196,38 +161,6 @@ h1 {
 
 .exam-card {
   width: 100%;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.84);
-}
-
-.exam-card h2 {
-  margin: 4px 0 0;
-  color: #17231f;
-  font-size: 1.35rem;
-  font-weight: 800;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.stats div {
-  padding: 12px;
-  border-radius: 14px;
-  background: #f5f1e8;
-}
-
-.stats span {
-  display: block;
-  color: #6b7773;
-  font-size: 0.78rem;
-}
-
-.stats strong {
-  color: #17231f;
-  font-size: 1.08rem;
 }
 
 .empty-state {

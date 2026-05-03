@@ -10,8 +10,7 @@
       <q-inner-loading :showing="loading" />
 
       <q-card-section v-if="exam">
-        <p class="eyebrow">Resultado</p>
-        <h1>{{ exam.name || `Prova #${exam.id}` }}</h1>
+        <PageHeading eyebrow="Resultado" :title="exam.name || `Prova #${exam.id}`" />
 
         <div class="score-panel q-mt-lg">
           <div>
@@ -35,6 +34,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import PageHeading from 'src/components/PageHeading.vue'
 import { STUDENT_ID } from 'src/config/app'
 import { studentExamsApi } from 'src/services/api'
 
@@ -80,21 +80,6 @@ async function loadResult () {
   max-width: 820px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.86);
-}
-
-.eyebrow {
-  margin: 0 0 8px;
-  color: #66736f;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0;
-  color: #17231f;
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
 }
 
 .score-panel {
