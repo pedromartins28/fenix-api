@@ -30,6 +30,14 @@ class ClassGroupExamService
 
     public function detachExam(ClassGroup $classGroup, Exam $exam): void
     {
+        if ($exam->attempts()->whereHas('student', function ($query) use ($classGroup): void {
+            $query->where('class_group_id', $classGroup->id);
+        })->exists()) {
+            throw ValidationException::withMessages([
+                'exam_id' => 'This exam has already been attempted by students of this class.',
+            ]);
+        }
+
         $classGroup->exams()->detach($exam->id);
     }
 }
