@@ -47,7 +47,7 @@ class ExamController extends Controller
 
     public function destroy(Exam $exam): Response
     {
-        $exam->delete();
+        $this->examService->delete($exam);
 
         return response()->noContent();
     }

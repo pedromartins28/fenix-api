@@ -12,6 +12,8 @@ async function request (path, options = {}) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Erro inesperado na API.' }))
+    error.message = firstValidationError(error) || error.message
+
     throw error
   }
 
@@ -20,6 +22,16 @@ async function request (path, options = {}) {
   }
 
   return response.json()
+}
+
+function firstValidationError (error) {
+  if (!error?.errors) {
+    return ''
+  }
+
+  const [messages] = Object.values(error.errors)
+
+  return Array.isArray(messages) ? messages[0] : messages
 }
 
 export const api = {

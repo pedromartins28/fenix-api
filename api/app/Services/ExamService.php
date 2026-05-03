@@ -27,6 +27,7 @@ class ExamService
 
     public function update(Exam $exam, array $data): Exam
     {
+        $this->ensureExamCanBeChanged($exam);
         $this->validateBusinessRules($data);
 
         return DB::transaction(function () use ($exam, $data) {
@@ -50,6 +51,27 @@ class ExamService
 
             return $exam->load(['classGroups:id,code', 'questions.options']);
         });
+    }
+
+    public function delete(Exam $exam): void
+    {
+        $this->ensureExamCanBeChanged($exam);
+
+        DB::transaction(function () use ($exam): void {
+            $exam->classGroups()->detach();
+            $exam->delete();
+        });
+    }
+
+    private function ensureExamCanBeChanged(Exam $exam): void
+    {
+        if (! $exam->attempts()->exists()) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'exam' => 'This test has already been attempted by students and cannot be changed.',
+        ]);
     }
 
     private function validateBusinessRules(array $data): void
