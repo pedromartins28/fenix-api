@@ -43,6 +43,28 @@ class ExamExecutionServiceTest extends TestCase
         $this->service()->showAvailableExam($student, $exam);
     }
 
+    public function test_it_shows_available_exam_summary_with_attempt_result(): void
+    {
+        $classGroup = ClassGroup::create(['code' => 'CLASS-A']);
+        $student = $this->createStudent($classGroup);
+        $exam = $this->createExam($classGroup);
+        $attempt = $this->createAttempt($student, $exam);
+        $attempt->update([
+            'finished_at' => now(),
+            'correct_answers_count' => 2,
+            'score' => 10,
+        ]);
+
+        $summary = $this->service()->showAvailableExam($student, $exam);
+
+        $this->assertSame($exam->id, $summary['id']);
+        $this->assertNotNull($summary['started_at']);
+        $this->assertNotNull($summary['finished_at']);
+        $this->assertSame(2, $summary['correct_answers_count']);
+        $this->assertSame('10.00', $summary['score']);
+        $this->assertArrayNotHasKey('questions', $summary);
+    }
+
     public function test_it_starts_attempt_and_returns_exam_questions(): void
     {
         $classGroup = ClassGroup::create(['code' => 'CLASS-A']);
@@ -86,6 +108,21 @@ class ExamExecutionServiceTest extends TestCase
         $this->service()->showAttempt($student, $exam);
     }
 
+    public function test_it_shows_started_attempt_with_questions(): void
+    {
+        $classGroup = ClassGroup::create(['code' => 'CLASS-A']);
+        $student = $this->createStudent($classGroup);
+        $exam = $this->createExam($classGroup);
+        $attempt = $this->createAttempt($student, $exam);
+
+        $result = $this->service()->showAttempt($student, $exam);
+
+        $this->assertSame($attempt->id, $result['id']);
+        $this->assertSame($exam->id, $result['exam_id']);
+        $this->assertCount(2, $result['exam']['questions']);
+        $this->assertCount(2, $result['exam']['questions'][0]['options']);
+    }
+
     public function test_it_submits_answers_and_calculates_score(): void
     {
         $classGroup = ClassGroup::create(['code' => 'CLASS-A']);
@@ -103,6 +140,21 @@ class ExamExecutionServiceTest extends TestCase
         $this->assertNotNull($result->finished_at);
         $this->assertSame(1, $result->correct_answers_count);
         $this->assertSame(5.0, (float) $result->score);
+    }
+
+    public function test_it_rejects_answers_when_amount_does_not_match_questions(): void
+    {
+        $classGroup = ClassGroup::create(['code' => 'CLASS-A']);
+        $student = $this->createStudent($classGroup);
+        $exam = $this->createExam($classGroup);
+        $attempt = $this->createAttempt($student, $exam);
+        $question = $exam->questions()->with('options')->first();
+
+        $this->expectException(ValidationException::class);
+
+        $this->service()->submitAnswers($attempt, [
+            $this->answerPayload($question, $this->correctOption($question)),
+        ]);
     }
 
     public function test_it_blocks_submitting_answers_twice(): void
