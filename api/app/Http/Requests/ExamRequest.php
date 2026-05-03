@@ -17,8 +17,6 @@ class ExamRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'questions_count' => ['required', 'integer', 'min:1'],
             'value' => ['required', 'numeric', 'min:0'],
-            'class_group_ids' => ['required', 'array', 'min:1'],
-            'class_group_ids.*' => ['required', 'integer', 'distinct', 'exists:class_groups,id'],
             'questions' => ['required', 'array', 'min:1'],
             'questions.*.statement' => ['required', 'string'],
             'questions.*.position' => ['required', 'integer', 'min:1', 'distinct'],

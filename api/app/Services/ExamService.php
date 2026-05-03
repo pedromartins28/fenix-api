@@ -20,7 +20,6 @@ class ExamService
             ]);
 
             $this->syncQuestions($exam, $data['questions']);
-            $exam->classGroups()->sync($data['class_group_ids']);
 
             return $exam->load(['classGroups:id,code', 'questions.options']);
         });
@@ -48,8 +47,6 @@ class ExamService
 
                 $this->syncQuestions($exam, $data['questions']);
             }
-
-            $exam->classGroups()->sync($data['class_group_ids']);
 
             return $exam->load(['classGroups:id,code', 'questions.options']);
         });
