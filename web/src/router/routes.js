@@ -11,6 +11,7 @@ const routes = [
         path: 'student/exams/:examId/attempt',
         component: () => import('pages/student/StudentExamAttemptPage.vue')
       },
+      { path: 'student/results/:examId', component: () => import('pages/student/StudentExamResultPage.vue') },
       { path: 'teacher', redirect: '/teacher/exams' },
       { path: 'teacher/exams', component: () => import('pages/teacher/TeacherExamsPage.vue') },
       { path: 'teacher/exams/create', component: () => import('pages/teacher/TeacherExamFormPage.vue') },

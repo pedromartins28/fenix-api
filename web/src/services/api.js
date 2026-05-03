@@ -40,3 +40,14 @@ export const examsApi = {
   update: (examId, payload) => api.put(`/exams/${examId}`, payload),
   delete: (examId) => api.delete(`/exams/${examId}`)
 }
+
+export const studentExamsApi = {
+  list: (studentId) => api.get(`/students/${studentId}/exams`),
+  show: (studentId, examId) => api.get(`/students/${studentId}/exams/${examId}`),
+  showAttempt: (studentId, examId) => api.get(`/students/${studentId}/exams/${examId}/attempt`),
+  startAttempt: (studentId, examId) => api.post(`/students/${studentId}/exams/${examId}/attempt`, {})
+}
+
+export const examAttemptsApi = {
+  submitAnswers: (attemptId, answers) => api.post(`/exam-attempts/${attemptId}/answers`, { answers })
+}

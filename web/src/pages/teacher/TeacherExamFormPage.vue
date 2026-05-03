@@ -35,29 +35,6 @@
 
       <q-card flat bordered class="form-card">
         <q-card-section>
-          <div class="row items-center justify-between q-gutter-md">
-            <div>
-              <div class="text-h6 text-weight-bold">Turmas com acesso</div>
-              <p class="text-body2 text-grey-7 q-mb-none">Selecione uma ou mais turmas para publicar a prova.</p>
-            </div>
-            <q-spinner v-if="loadingClassGroups" color="primary" size="24px" />
-          </div>
-
-          <div class="class-grid q-mt-md">
-            <q-checkbox
-              v-for="classGroup in classGroups"
-              :key="classGroup.id"
-              v-model="form.class_group_ids"
-              :val="classGroup.id"
-              :label="classGroup.code"
-              color="primary"
-            />
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <q-card flat bordered class="form-card">
-        <q-card-section>
           <div class="text-h6 text-weight-bold">Questões</div>
 
           <q-list separator class="q-mt-md">
@@ -122,38 +99,23 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, computed } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
-import { classGroupsApi, examsApi } from 'src/services/api'
+import { examsApi } from 'src/services/api'
 
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 
 const isEditing = computed(() => Boolean(route.params.examId))
-const classGroups = ref([])
-const loadingClassGroups = ref(false)
 const saving = ref(false)
 
 const form = reactive({
   name: '',
   questions_count: 1,
   value: 10,
-  class_group_ids: [],
   questions: [createQuestion(1)]
-})
-
-onMounted(async () => {
-  loadingClassGroups.value = true
-
-  try {
-    classGroups.value = await classGroupsApi.list()
-  } catch {
-    classGroups.value = []
-  } finally {
-    loadingClassGroups.value = false
-  }
 })
 
 function createQuestion (position) {
@@ -247,12 +209,6 @@ async function submitForm () {
 
 .form-card {
   border-radius: 18px;
-}
-
-.class-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 8px;
 }
 
 .option-row {
