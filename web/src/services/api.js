@@ -41,6 +41,11 @@ export const examsApi = {
   delete: (examId) => api.delete(`/exams/${examId}`)
 }
 
+export const classGroupExamsApi = {
+  link: (classGroupId, examId) => api.post(`/class-groups/${classGroupId}/exams`, { exam_id: examId }),
+  unlink: (classGroupId, examId) => api.delete(`/class-groups/${classGroupId}/exams/${examId}`)
+}
+
 export const studentExamsApi = {
   list: (studentId) => api.get(`/students/${studentId}/exams`),
   show: (studentId, examId) => api.get(`/students/${studentId}/exams/${examId}`),

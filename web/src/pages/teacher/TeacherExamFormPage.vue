@@ -9,6 +9,8 @@
     </div>
 
     <q-form class="exam-form" @submit.prevent="submitForm">
+      <q-inner-loading :showing="loadingExam" />
+
       <q-card flat bordered class="form-card">
         <q-card-section>
           <div class="text-h6 text-weight-bold">Dados da prova</div>
@@ -35,7 +37,14 @@
 
       <q-card flat bordered class="form-card">
         <q-card-section>
-          <div class="text-h6 text-weight-bold">Questões</div>
+          <div class="row items-center justify-between q-gutter-md">
+            <div>
+              <div class="text-h6 text-weight-bold">Questões</div>
+              <p class="text-body2 text-grey-7 q-mb-none">Adicione as questões e marque uma alternativa correta em cada uma.</p>
+            </div>
+
+            <q-btn flat no-caps color="primary" icon="add" label="Adicionar questão" @click="addQuestion" />
+          </div>
 
           <q-list separator class="q-mt-md">
             <q-expansion-item
@@ -46,6 +55,19 @@
               default-opened
             >
               <div class="q-pa-md">
+                <div class="row justify-end q-mb-sm">
+                  <q-btn
+                    flat
+                    dense
+                    no-caps
+                    color="negative"
+                    icon="delete"
+                    label="Remover questão"
+                    :disable="form.questions.length <= 1"
+                    @click="removeQuestion(questionIndex)"
+                  />
+                </div>
+
                 <q-input v-model="question.statement" outlined type="textarea" label="Enunciado" />
 
                 <div class="text-subtitle2 text-weight-bold q-mt-lg q-mb-sm">Alternativas</div>
@@ -99,7 +121,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { onMounted, reactive, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { examsApi } from 'src/services/api'
@@ -110,12 +132,19 @@ const $q = useQuasar()
 
 const isEditing = computed(() => Boolean(route.params.examId))
 const saving = ref(false)
+const loadingExam = ref(false)
 
 const form = reactive({
   name: '',
   questions_count: 1,
   value: 10,
   questions: [createQuestion(1)]
+})
+
+onMounted(async () => {
+  if (isEditing.value) {
+    await loadExam()
+  }
 })
 
 function createQuestion (position) {
@@ -141,6 +170,27 @@ function syncQuestionsCount () {
     form.questions.pop()
   }
 
+  form.questions.forEach((question, index) => {
+    question.position = index + 1
+  })
+}
+
+function addQuestion () {
+  form.questions.push(createQuestion(form.questions.length + 1))
+  syncQuestionsPositions()
+}
+
+function removeQuestion (questionIndex) {
+  if (form.questions.length <= 1) {
+    return
+  }
+
+  form.questions.splice(questionIndex, 1)
+  syncQuestionsPositions()
+}
+
+function syncQuestionsPositions () {
+  form.questions_count = form.questions.length
   form.questions.forEach((question, index) => {
     question.position = index + 1
   })
@@ -177,10 +227,12 @@ async function submitForm () {
   saving.value = true
 
   try {
+    const payload = buildPayload()
+
     if (isEditing.value) {
-      await examsApi.update(route.params.examId, form)
+      await examsApi.update(route.params.examId, payload)
     } else {
-      await examsApi.create(form)
+      await examsApi.create(payload)
     }
 
     $q.notify({ type: 'positive', message: 'Prova salva com sucesso.' })
@@ -192,6 +244,49 @@ async function submitForm () {
     })
   } finally {
     saving.value = false
+  }
+}
+
+async function loadExam () {
+  loadingExam.value = true
+
+  try {
+    const exam = await examsApi.show(route.params.examId)
+    form.name = exam.name || ''
+    form.questions_count = Number(exam.questions_count)
+    form.value = Number(exam.value)
+    form.questions = exam.questions.map((question, index) => ({
+      statement: question.statement,
+      position: question.position || index + 1,
+      options: question.options.map((option) => ({
+        description: option.description,
+        is_correct: Boolean(option.is_correct)
+      }))
+    }))
+    syncQuestionsPositions()
+  } catch (error) {
+    $q.notify({ type: 'negative', message: error.message || 'Não foi possível carregar a prova.' })
+    router.push('/teacher/exams')
+  } finally {
+    loadingExam.value = false
+  }
+}
+
+function buildPayload () {
+  syncQuestionsPositions()
+
+  return {
+    name: form.name,
+    questions_count: form.questions_count,
+    value: form.value,
+    questions: form.questions.map((question) => ({
+      statement: question.statement,
+      position: question.position,
+      options: question.options.map((option) => ({
+        description: option.description,
+        is_correct: option.is_correct
+      }))
+    }))
   }
 }
 </script>
