@@ -13,7 +13,6 @@
 
     <div v-else-if="attempt" class="attempt-shell q-mt-md">
       <div class="page-heading">
-        <p class="eyebrow">Tentativa #{{ attempt.id }}</p>
         <h1>{{ attempt.exam.name || `Prova #${attempt.exam.id}` }}</h1>
         <p>Responda todas as questões antes de finalizar a prova.</p>
       </div>
@@ -55,9 +54,9 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
+import { STUDENT_ID } from 'src/config/app'
 import { examAttemptsApi, studentExamsApi } from 'src/services/api'
 
-const STUDENT_ID = 1
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()

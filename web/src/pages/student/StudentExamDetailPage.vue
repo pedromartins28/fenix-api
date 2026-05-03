@@ -59,9 +59,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { STUDENT_ID } from 'src/config/app'
 import { studentExamsApi } from 'src/services/api'
 
-const STUDENT_ID = 1
 const route = useRoute()
 
 const exam = ref(null)

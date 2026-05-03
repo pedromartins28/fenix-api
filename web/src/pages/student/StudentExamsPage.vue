@@ -83,9 +83,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { STUDENT_ID } from 'src/config/app'
 import { studentExamsApi } from 'src/services/api'
-
-const STUDENT_ID = 1
 
 const exams = ref([])
 const loading = ref(false)
