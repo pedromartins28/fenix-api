@@ -11,7 +11,6 @@
 
       <q-card-section v-if="exam">
         <PageHeading
-          eyebrow="Aluno"
           :title="exam.name || `Prova #${exam.id}`"
           subtitle="Inicie a prova para visualizar as questões."
         />
@@ -32,13 +31,13 @@
         </div>
       </q-card-section>
 
-      <q-card-actions align="right">
+      <q-card-actions class="detail-actions">
         <q-btn
           v-if="exam?.finished_at"
           color="primary"
           outline
           no-caps
-          label="Ver resultado"
+          label="Visualizar"
           :to="`/student/results/${exam.id}`"
         />
         <q-btn
@@ -46,7 +45,7 @@
           color="primary"
           unelevated
           no-caps
-          label="Iniciar prova"
+          label="Iniciar"
           :to="`/student/exams/${exam?.id}/attempt`"
         />
       </q-card-actions>
@@ -94,13 +93,16 @@ function displayOrSlash (value) {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f7f4ec;
+  background: var(--app-page);
 }
 
 .detail-card {
+  width: min(760px, 100%);
   max-width: 760px;
+  margin-inline: auto;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.84);
+  background: var(--app-surface);
+  text-align: center;
 }
 
 .stats {
@@ -112,17 +114,22 @@ function displayOrSlash (value) {
 .stats div {
   padding: 14px;
   border-radius: 16px;
-  background: #f5f1e8;
+  background: var(--app-surface-soft);
 }
 
 .stats span {
   display: block;
-  color: #6b7773;
+  color: var(--app-muted);
   font-size: 0.8rem;
 }
 
 .stats strong {
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.15rem;
+}
+
+.detail-actions {
+  justify-content: center;
+  padding-bottom: 18px;
 }
 </style>

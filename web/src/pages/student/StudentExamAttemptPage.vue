@@ -1,12 +1,12 @@
 <template>
   <q-page padding class="page-shell">
-    <q-btn flat no-caps icon="arrow_back" label="Voltar" :to="`/student/exams/${route.params.examId}`" />
+    <q-btn flat no-caps icon="arrow_back" label="Voltar" to="/student/exams" />
 
     <q-banner v-if="errorMessage" rounded class="bg-red-1 text-red-10 q-mt-md">
       {{ errorMessage }}
     </q-banner>
 
-    <div v-if="loading" class="q-mt-lg">
+    <div v-if="loading" class="loading-shell q-mt-lg">
       <q-skeleton height="90px" class="q-mb-md" />
       <q-skeleton v-for="item in 3" :key="item" height="180px" class="q-mb-md" />
     </div>
@@ -42,8 +42,7 @@
         </q-card>
 
         <div class="row justify-end q-gutter-sm">
-          <q-btn flat no-caps label="Voltar depois" to="/student/exams" />
-          <q-btn color="primary" unelevated no-caps type="submit" label="Finalizar prova" :loading="submitting" />
+          <q-btn color="primary" unelevated no-caps type="submit" label="Finalizar" :loading="submitting" />
         </div>
       </q-form>
     </div>
@@ -96,7 +95,7 @@ async function submitAnswers () {
   const missingAnswer = questions.some((question) => !selectedOptions[question.id])
 
   if (missingAnswer) {
-    $q.notify({ type: 'warning', message: 'Responda todas as questões antes de finalizar.' })
+    $q.notify({ type: 'warning', message: 'Responda todas as questões antes de finalizar.', position: 'top' })
     return
   }
 
@@ -109,10 +108,10 @@ async function submitAnswers () {
     }))
 
     await examAttemptsApi.submitAnswers(attempt.value.id, answers)
-    $q.notify({ type: 'positive', message: 'Prova enviada com sucesso.' })
+    $q.notify({ type: 'positive', message: 'Prova enviada com sucesso.', position: 'top' })
     router.push(`/student/results/${route.params.examId}`)
   } catch (error) {
-    $q.notify({ type: 'negative', message: error.message || 'Não foi possível enviar a prova.' })
+    $q.notify({ type: 'negative', message: error.message || 'Não foi possível enviar a prova.', position: 'top' })
   } finally {
     submitting.value = false
   }
@@ -122,11 +121,19 @@ async function submitAnswers () {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f7f4ec;
+  background: var(--app-page);
 }
 
 .attempt-shell {
+  width: min(900px, 100%);
   max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.loading-shell {
+  width: min(900px, 100%);
+  margin-inline: auto;
 }
 
 .question-stack {
@@ -136,12 +143,13 @@ async function submitAnswers () {
 
 .question-card {
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--app-surface);
+  text-align: left;
 }
 
 .question-card h2 {
   margin: 4px 0 16px;
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.25rem;
   font-weight: 800;
 }

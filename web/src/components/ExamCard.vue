@@ -1,12 +1,12 @@
 <template>
   <q-card flat bordered class="exam-card">
-    <q-card-section>
-      <div class="row items-start justify-between q-gutter-sm">
-        <div>
-          <h2>{{ exam.name || `Prova ${exam.id}` }}</h2>
-        </div>
-
+    <q-card-section class="exam-card__section">
+      <div v-if="$slots.badge" class="exam-card__badge">
         <slot name="badge" />
+      </div>
+
+      <div class="exam-card__header">
+        <h2>{{ exam.name }}</h2>
       </div>
 
       <slot name="stats">
@@ -25,7 +25,7 @@
       <slot name="content" />
     </q-card-section>
 
-    <q-card-actions v-if="$slots.actions" align="right">
+    <q-card-actions v-if="$slots.actions" class="exam-card__actions">
       <slot name="actions" />
     </q-card-actions>
   </q-card>
@@ -48,12 +48,34 @@ function formatScore (value) {
 .exam-card {
   width: 100%;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.84);
+  background: var(--app-surface);
+}
+
+.exam-card__section {
+  position: relative;
+  display: flex;
+  min-height: 190px;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 46px;
+}
+
+.exam-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.exam-card__badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .exam-card h2 {
   margin: 4px 0 0;
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.35rem;
   font-weight: 800;
 }
@@ -68,17 +90,22 @@ function formatScore (value) {
 .exam-card__stats div {
   padding: 12px;
   border-radius: 14px;
-  background: #f5f1e8;
+  background: var(--app-surface-soft);
 }
 
 .exam-card__stats span {
   display: block;
-  color: #6b7773;
+  color: var(--app-muted);
   font-size: 0.78rem;
 }
 
 .exam-card__stats strong {
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.08rem;
+}
+
+.exam-card__actions {
+  justify-content: center;
+  padding-bottom: 16px;
 }
 </style>

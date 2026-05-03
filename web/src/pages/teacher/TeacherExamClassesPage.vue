@@ -11,7 +11,6 @@
 
       <q-card-section>
         <PageHeading
-          eyebrow="Professor"
           title="Turmas da prova"
           :subtitle="exam ? exam.name || `Prova #${exam.id}` : `Prova #${route.params.examId}`"
         />
@@ -39,7 +38,7 @@
 
       <q-card-actions align="right">
         <q-btn flat no-caps label="Cancelar" to="/teacher/exams" />
-        <q-btn color="primary" unelevated no-caps label="Salvar vínculos" :loading="saving" @click="saveLinks" />
+        <q-btn color="primary" unelevated no-caps label="Salvar" :loading="saving" @click="saveLinks" />
       </q-card-actions>
     </q-card>
   </q-page>
@@ -101,10 +100,10 @@ async function saveLinks () {
       ...toUnlink.map((classGroupId) => classGroupExamsApi.unlink(classGroupId, route.params.examId))
     ])
 
-    $q.notify({ type: 'positive', message: 'Vínculos atualizados com sucesso.' })
+    $q.notify({ type: 'positive', message: 'Vínculos atualizados com sucesso.', position: 'top' })
     router.push('/teacher/exams')
   } catch (error) {
-    $q.notify({ type: 'negative', message: error.message || 'Não foi possível atualizar os vínculos.' })
+    $q.notify({ type: 'negative', message: error.message || 'Não foi possível atualizar os vínculos.', position: 'top' })
   } finally {
     saving.value = false
   }
@@ -114,13 +113,13 @@ async function saveLinks () {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f5f1e8;
+  background: var(--app-page);
 }
 
 .classes-card {
   max-width: 760px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--app-surface);
 }
 
 .class-grid {

@@ -8,7 +8,6 @@
 
     <PageHeading
       class="q-mt-md"
-      eyebrow="Professor"
       :title="dashboard?.exam?.name || `Dashboard da prova #${route.params.examId}`"
       subtitle="Resumo de desempenho, melhor pontuação e ranking dos alunos."
     />
@@ -231,14 +230,14 @@ function displayOrSlash (value) {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f5f1e8;
+  background: var(--app-page);
 }
 
 .filters-card,
 .ranking-card,
 .metric-card {
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--app-surface);
 }
 
 .metrics-grid {
@@ -249,19 +248,19 @@ function displayOrSlash (value) {
 
 .metric-card span {
   display: block;
-  color: #6b7773;
+  color: var(--app-muted);
   font-size: 0.86rem;
 }
 
 .metric-card strong {
   display: block;
   margin-top: 8px;
-  color: #17231f;
+  color: var(--app-text);
   font-size: clamp(1.7rem, 4vw, 2.5rem);
   font-weight: 800;
 }
 
 .metric-card small {
-  color: #6b7773;
+  color: var(--app-muted);
 }
 </style>

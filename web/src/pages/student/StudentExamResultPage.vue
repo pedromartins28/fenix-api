@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="page-shell">
-    <q-btn flat no-caps icon="arrow_back" label="Voltar para provas" to="/student/exams" />
+    <q-btn flat no-caps icon="arrow_back" label="Voltar" to="/student/exams" />
 
     <q-banner v-if="errorMessage" rounded class="bg-red-1 text-red-10 q-mt-md">
       {{ errorMessage }}
@@ -10,7 +10,7 @@
       <q-inner-loading :showing="loading" />
 
       <q-card-section v-if="exam">
-        <PageHeading eyebrow="Resultado" :title="exam.name || `Prova #${exam.id}`" />
+        <PageHeading :title="exam.name || `Prova #${exam.id}`" />
 
         <div class="score-panel q-mt-lg">
           <div>
@@ -77,13 +77,16 @@ function displayOrSlash (value) {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f7f4ec;
+  background: var(--app-page);
 }
 
 .result-card {
+  width: min(820px, 100%);
   max-width: 820px;
+  margin-inline: auto;
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--app-surface);
+  text-align: center;
 }
 
 .score-panel {
@@ -95,16 +98,16 @@ function displayOrSlash (value) {
 .score-panel div {
   padding: 18px;
   border-radius: 18px;
-  background: #f5f1e8;
+  background: var(--app-surface-soft);
 }
 
 .score-panel span {
   display: block;
-  color: #6b7773;
+  color: var(--app-muted);
 }
 
 .score-panel strong {
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.6rem;
 }
 </style>

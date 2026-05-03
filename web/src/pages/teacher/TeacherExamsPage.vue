@@ -2,12 +2,11 @@
   <q-page padding class="page-shell">
     <div class="row items-start justify-between q-gutter-md">
       <PageHeading
-        eyebrow="Professor"
         title="Provas cadastradas"
         subtitle="Crie, edite, exclua e acompanhe as provas do sistema."
       />
 
-      <q-btn color="primary" unelevated no-caps icon="add" label="Criar prova" to="/teacher/exams/create" />
+      <q-btn color="secondary" unelevated no-caps icon="add" label="Criar prova" to="/teacher/exams/create" />
     </div>
 
     <q-card flat bordered class="filter-card">
@@ -44,25 +43,43 @@
 
     <div v-else class="exam-grid q-mt-lg">
       <ExamCard v-for="exam in filteredExams" :key="exam.id" :exam="exam">
-        <template #content>
-          <div class="q-mt-md">
-            <q-chip
-              v-for="classGroup in exam.class_groups"
-              :key="classGroup.id"
-              dense
-              outline
-              color="primary"
-            >
-              {{ classGroup.code }}
-            </q-chip>
-          </div>
-        </template>
-
         <template #actions>
-          <q-btn flat dense no-caps color="primary" label="Métricas" :to="`/teacher/exams/${exam.id}/dashboard`" />
-          <q-btn flat dense no-caps color="secondary" label="Turmas" :to="`/teacher/exams/${exam.id}/classes`" />
-          <q-btn flat dense no-caps color="primary" label="Editar" :to="`/teacher/exams/${exam.id}/edit`" />
-          <q-btn flat dense no-caps color="negative" label="Excluir" @click="deleteExam(exam)" />
+          <q-btn
+            round
+            dense
+            unelevated
+            color="primary"
+            icon="bar_chart"
+            title="Métricas"
+            :to="`/teacher/exams/${exam.id}/dashboard`"
+          />
+          <q-btn
+            round
+            dense
+            unelevated
+            color="secondary"
+            icon="groups"
+            title="Turmas"
+            :to="`/teacher/exams/${exam.id}/classes`"
+          />
+          <q-btn
+            round
+            dense
+            unelevated
+            color="warning"
+            icon="edit"
+            title="Editar"
+            :to="`/teacher/exams/${exam.id}/edit`"
+          />
+          <q-btn
+            round
+            dense
+            unelevated
+            color="negative"
+            icon="delete"
+            title="Excluir"
+            @click="deleteExam(exam)"
+          />
         </template>
       </ExamCard>
     </div>
@@ -133,10 +150,10 @@ async function deleteExam (exam) {
 
   try {
     await examsApi.delete(exam.id)
-    $q.notify({ type: 'positive', message: 'Prova excluída com sucesso.' })
+    $q.notify({ type: 'positive', message: 'Prova excluída com sucesso.', position: 'top' })
     await loadExams()
   } catch (error) {
-    $q.notify({ type: 'negative', message: error.message || 'Não foi possível excluir a prova.' })
+    $q.notify({ type: 'negative', message: error.message || 'Não foi possível excluir a prova.', position: 'top' })
   }
 }
 
@@ -145,7 +162,7 @@ async function deleteExam (exam) {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f5f1e8;
+  background: var(--app-page);
 }
 
 .filter-card {
@@ -167,7 +184,7 @@ async function deleteExam (exam) {
   max-width: 460px;
   padding: 32px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.76);
-  color: #56645f;
+  background: var(--app-surface);
+  color: var(--app-muted);
 }
 </style>

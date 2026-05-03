@@ -2,122 +2,123 @@
   <q-page padding class="page-shell">
     <q-btn flat no-caps icon="arrow_back" label="Voltar" to="/teacher/exams" />
 
-    <PageHeading
-      class="q-mt-md"
-      eyebrow="Professor"
-      :title="isEditing ? 'Editar prova' : 'Criar prova'"
-      subtitle="Cadastre os dados da prova e monte as questões."
-    />
+    <div class="form-shell">
+      <PageHeading
+        class="q-mt-md"
+        :title="isEditing ? 'Editar prova' : 'Criar prova'"
+        subtitle="Cadastre os dados da prova e monte as questões."
+      />
 
-    <q-form class="exam-form" @submit.prevent="submitForm">
-      <q-inner-loading :showing="loadingExam" />
+      <q-form class="exam-form" @submit.prevent="submitForm">
+        <q-inner-loading :showing="loadingExam" />
 
-      <q-card flat bordered class="form-card">
-        <q-card-section>
-          <div class="text-h6 text-weight-bold">Dados da prova</div>
-          <div class="row q-col-gutter-md q-mt-sm">
-            <div class="col-12 col-md-6">
-              <q-input v-model="form.name" outlined label="Nome da prova" />
-            </div>
-            <div class="col-12 col-md-3">
-              <q-input
-                v-model.number="form.questions_count"
-                outlined
-                type="number"
-                min="1"
-                label="Número de questões"
-                @update:model-value="syncQuestionsCount"
-              />
-            </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model.number="form.value" outlined type="number" min="0" step="0.01" label="Valor" />
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <q-card flat bordered class="form-card">
-        <q-card-section>
-          <div class="row items-center justify-between q-gutter-md">
-            <div>
-              <div class="text-h6 text-weight-bold">Questões</div>
-              <p class="text-body2 text-grey-7 q-mb-none">Adicione as questões e marque uma alternativa correta em cada uma.</p>
-            </div>
-
-            <q-btn flat no-caps color="primary" icon="add" label="Adicionar questão" @click="addQuestion" />
-          </div>
-
-          <q-list separator class="q-mt-md">
-            <q-expansion-item
-              v-for="(question, questionIndex) in form.questions"
-              :key="questionIndex"
-              expand-separator
-              :label="`Questão ${question.position}`"
-              default-opened
-            >
-              <div class="q-pa-md">
-                <div class="row justify-end q-mb-sm">
-                  <q-btn
-                    flat
-                    dense
-                    no-caps
-                    color="negative"
-                    icon="delete"
-                    label="Remover questão"
-                    :disable="form.questions.length <= 1"
-                    @click="removeQuestion(questionIndex)"
-                  />
-                </div>
-
-                <q-input v-model="question.statement" outlined type="textarea" label="Enunciado" />
-
-                <div class="text-subtitle2 text-weight-bold q-mt-lg q-mb-sm">Alternativas</div>
-                <div
-                  v-for="(option, optionIndex) in question.options"
-                  :key="optionIndex"
-                  class="option-row"
-                >
-                  <q-input v-model="option.description" outlined dense label="Descrição da alternativa" />
-                  <q-radio
-                    :model-value="correctOptionIndex(question)"
-                    :val="optionIndex"
-                    label="Correta"
-                    color="primary"
-                    @update:model-value="markCorrect(question, optionIndex)"
-                  />
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    color="negative"
-                    icon="delete"
-                    :disable="question.options.length <= 2"
-                    @click="removeOption(question, optionIndex)"
-                  >
-                    <q-tooltip>Remover alternativa</q-tooltip>
-                  </q-btn>
-                </div>
-
-                <q-btn
-                  flat
-                  no-caps
-                  color="primary"
-                  icon="add"
-                  label="Adicionar alternativa"
-                  class="q-mt-sm"
-                  @click="addOption(question)"
+        <q-card flat bordered class="form-card">
+          <q-card-section>
+            <div class="text-h6 text-weight-bold">Dados da prova</div>
+            <div class="row q-col-gutter-md q-mt-sm">
+              <div class="col-12 col-md-6">
+                <q-input v-model="form.name" outlined label="Nome da prova" />
+              </div>
+              <div class="col-12 col-md-3">
+                <q-input
+                  v-model.number="form.questions_count"
+                  outlined
+                  type="number"
+                  min="1"
+                  label="Número de questões"
+                  @update:model-value="syncQuestionsCount"
                 />
               </div>
-            </q-expansion-item>
-          </q-list>
-        </q-card-section>
-      </q-card>
+              <div class="col-12 col-md-3">
+                <q-input v-model.number="form.value" outlined type="number" min="0" step="0.01" label="Valor" />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
 
-      <div class="row justify-end q-gutter-sm">
-        <q-btn flat no-caps label="Cancelar" to="/teacher/exams" />
-        <q-btn color="primary" unelevated no-caps type="submit" label="Salvar prova" :loading="saving" />
-      </div>
-    </q-form>
+        <q-card flat bordered class="form-card">
+          <q-card-section>
+            <div class="row items-center justify-between q-gutter-md">
+              <div>
+                <div class="text-h6 text-weight-bold">Questões</div>
+                <p class="text-body2 text-grey-7 q-mb-none">Adicione as questões e marque uma alternativa correta em cada uma.</p>
+              </div>
+
+              <q-btn flat no-caps color="primary" icon="add" label="Adicionar questão" @click="addQuestion" />
+            </div>
+
+            <q-list separator class="q-mt-md">
+              <q-expansion-item
+                v-for="(question, questionIndex) in form.questions"
+                :key="questionIndex"
+                expand-separator
+                :label="`Questão ${question.position}`"
+                default-opened
+              >
+                <div class="q-pa-md">
+                  <div class="row justify-end q-mb-sm">
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      color="negative"
+                      icon="delete"
+                      label="Remover questão"
+                      :disable="form.questions.length <= 1"
+                      @click="removeQuestion(questionIndex)"
+                    />
+                  </div>
+
+                  <q-input v-model="question.statement" outlined type="textarea" label="Enunciado" />
+
+                  <div class="text-subtitle2 text-weight-bold q-mt-lg q-mb-sm">Alternativas</div>
+                  <div
+                    v-for="(option, optionIndex) in question.options"
+                    :key="optionIndex"
+                    class="option-row"
+                  >
+                    <q-input v-model="option.description" outlined dense label="Descrição da alternativa" />
+                    <q-radio
+                      :model-value="correctOptionIndex(question)"
+                      :val="optionIndex"
+                      label="Correta"
+                      color="primary"
+                      @update:model-value="markCorrect(question, optionIndex)"
+                    />
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      color="negative"
+                      icon="delete"
+                      :disable="question.options.length <= 2"
+                      @click="removeOption(question, optionIndex)"
+                    >
+                      <q-tooltip>Remover alternativa</q-tooltip>
+                    </q-btn>
+                  </div>
+
+                  <q-btn
+                    flat
+                    no-caps
+                    color="primary"
+                    icon="add"
+                    label="Adicionar alternativa"
+                    class="q-mt-sm"
+                    @click="addOption(question)"
+                  />
+                </div>
+              </q-expansion-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+
+        <div class="form-actions">
+          <q-btn flat no-caps label="Cancelar" to="/teacher/exams" />
+          <q-btn color="primary" unelevated no-caps type="submit" label="Salvar" :loading="saving" />
+        </div>
+      </q-form>
+    </div>
   </q-page>
 </template>
 
@@ -237,12 +238,13 @@ async function submitForm () {
       await examsApi.create(payload)
     }
 
-    $q.notify({ type: 'positive', message: 'Prova salva com sucesso.' })
+    $q.notify({ type: 'positive', message: 'Prova salva com sucesso.', position: 'top' })
     router.push('/teacher/exams')
   } catch (error) {
     $q.notify({
       type: 'negative',
-      message: error.message || 'Não foi possível salvar a prova.'
+      message: error.message || 'Não foi possível salvar a prova.',
+      position: 'top'
     })
   } finally {
     saving.value = false
@@ -267,7 +269,7 @@ async function loadExam () {
     }))
     syncQuestionsPositions()
   } catch (error) {
-    $q.notify({ type: 'negative', message: error.message || 'Não foi possível carregar a prova.' })
+    $q.notify({ type: 'negative', message: error.message || 'Não foi possível carregar a prova.', position: 'top' })
     router.push('/teacher/exams')
   } finally {
     loadingExam.value = false
@@ -295,17 +297,27 @@ function buildPayload () {
 
 <style scoped>
 .page-shell {
-  background: #f5f1e8;
+  background: var(--app-page);
+}
+
+.form-shell {
+  width: min(980px, 100%);
+  margin-inline: auto;
 }
 
 .exam-form {
   display: grid;
   gap: 18px;
-  max-width: 980px;
 }
 
 .form-card {
   border-radius: 18px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .option-row {

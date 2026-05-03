@@ -3,10 +3,10 @@
     <q-header class="app-header">
       <q-toolbar>
         <q-toolbar-title class="brand" @click="$router.push('/')">
-          Fenix
+          <img class="brand__logo" src="/logo.png" alt="Fenix" />
         </q-toolbar-title>
 
-        <q-tabs shrink stretch>
+        <q-tabs shrink stretch active-color="secondary" indicator-color="secondary">
           <q-route-tab to="/teacher/exams" label="Professor" />
           <q-route-tab to="/student/exams" label="Aluno" />
         </q-tabs>
@@ -21,12 +21,19 @@
 
 <style scoped>
 .app-header {
-  background: #18221f;
+  background: $primary;
 }
 
 .brand {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+}
+
+.brand__logo {
+  display: block;
+  width: auto;
+  height: 34px;
+  object-fit: contain;
 }
 </style>

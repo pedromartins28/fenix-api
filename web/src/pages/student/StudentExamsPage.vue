@@ -1,7 +1,6 @@
 <template>
   <q-page padding class="page-shell">
     <PageHeading
-      eyebrow="Aluno"
       title="Provas disponíveis"
       :subtitle="`Aluno #${STUDENT_ID}`"
     />
@@ -67,7 +66,7 @@
             color="primary"
             outline
             no-caps
-            label="Ver resultado"
+            label="Visualizar"
             :to="`/student/results/${exam.id}`"
           />
         </template>
@@ -104,14 +103,14 @@ async function loadExams () {
 
 function statusMeta (exam) {
   if (exam.finished_at) {
-    return { label: 'finalizada', color: 'positive' }
+    return { label: 'Finalizada', color: 'positive' }
   }
 
   if (exam.started_at) {
-    return { label: 'em andamento', color: 'warning' }
+    return { label: 'Em Andamento', color: 'warning' }
   }
 
-  return { label: 'não iniciada', color: 'grey-7' }
+  return { label: 'Não Iniciada', color: 'grey-7' }
 }
 
 function accuracyLabel (exam) {
@@ -136,7 +135,7 @@ function formatScore (value) {
 <style scoped>
 .page-shell {
   min-height: calc(100vh - 50px);
-  background: #f7f4ec;
+  background: var(--app-page);
 }
 
 .exam-grid {
@@ -159,17 +158,17 @@ function formatScore (value) {
 .stats div {
   padding: 12px;
   border-radius: 14px;
-  background: #f5f1e8;
+  background: var(--app-surface-soft);
 }
 
 .stats span {
   display: block;
-  color: #6b7773;
+  color: var(--app-muted);
   font-size: 0.78rem;
 }
 
 .stats strong {
-  color: #17231f;
+  color: var(--app-text);
   font-size: 1.08rem;
 }
 
@@ -177,7 +176,7 @@ function formatScore (value) {
   max-width: 460px;
   padding: 32px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.76);
-  color: #56645f;
+  background: var(--app-surface);
+  color: var(--app-muted);
 }
 </style>
