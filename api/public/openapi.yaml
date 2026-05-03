@@ -1,0 +1,639 @@
+openapi: 3.0.3
+info:
+  title: Fenix Challenge API
+  version: 1.0.0
+  description: API para gerenciamento de provas por professores, execução de provas por alunos e dashboard de resultados.
+servers:
+  - url: http://localhost:8000/api
+    description: Ambiente local
+tags:
+  - name: Exams
+    description: CRUD de provas
+  - name: Class Groups
+    description: Turmas e vínculo de provas
+  - name: Student Exam Execution
+    description: Fluxo de realização de prova pelo aluno
+  - name: Dashboard
+    description: Métricas e ranking da prova
+paths:
+  /exams:
+    get:
+      tags: [Exams]
+      summary: Lista todas as provas
+      responses:
+        "200":
+          description: Lista de provas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExamSummaryWithClassGroups"
+    post:
+      tags: [Exams]
+      summary: Cria uma prova com questões e alternativas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExamPayload"
+      responses:
+        "200":
+          description: Prova criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamDetail"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /exams/{examId}:
+    get:
+      tags: [Exams]
+      summary: Busca uma prova específica
+      parameters:
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "200":
+          description: Dados completos da prova
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [Exams]
+      summary: Atualiza uma prova
+      parameters:
+        - $ref: "#/components/parameters/ExamId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExamPayload"
+      responses:
+        "200":
+          description: Prova atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamDetail"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    delete:
+      tags: [Exams]
+      summary: Exclui uma prova
+      description: Provas com tentativas de alunos não podem ser excluídas.
+      parameters:
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "204":
+          description: Prova excluída
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /class-groups:
+    get:
+      tags: [Class Groups]
+      summary: Lista turmas
+      responses:
+        "200":
+          description: Lista de turmas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClassGroup"
+  /class-groups/{classGroupId}/exams:
+    get:
+      tags: [Class Groups]
+      summary: Lista provas vinculadas a uma turma
+      parameters:
+        - $ref: "#/components/parameters/ClassGroupId"
+      responses:
+        "200":
+          description: Provas vinculadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExamSummaryWithClassGroups"
+    post:
+      tags: [Class Groups]
+      summary: Vincula uma prova a uma turma
+      parameters:
+        - $ref: "#/components/parameters/ClassGroupId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [exam_id]
+              properties:
+                exam_id:
+                  type: integer
+                  example: 1
+      responses:
+        "200":
+          description: Prova vinculada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamSummaryWithClassGroups"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /class-groups/{classGroupId}/exams/{examId}:
+    delete:
+      tags: [Class Groups]
+      summary: Desvincula uma prova de uma turma
+      description: O desvínculo é bloqueado se alunos daquela turma já tentaram a prova.
+      parameters:
+        - $ref: "#/components/parameters/ClassGroupId"
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "204":
+          description: Prova desvinculada
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /students/{studentId}/exams:
+    get:
+      tags: [Student Exam Execution]
+      summary: Lista provas disponíveis para o aluno
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+      responses:
+        "200":
+          description: Provas disponíveis para a turma do aluno
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentExamSummary"
+  /students/{studentId}/exams/{examId}:
+    get:
+      tags: [Student Exam Execution]
+      summary: Busca informações de uma prova disponível para o aluno
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "200":
+          description: Informações da prova sem questões
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentExamSummary"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /students/{studentId}/exams/{examId}/attempt:
+    get:
+      tags: [Student Exam Execution]
+      summary: Busca a tentativa existente da prova
+      description: Só retorna questões se a tentativa já tiver sido iniciada.
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "200":
+          description: Tentativa da prova
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamAttempt"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+    post:
+      tags: [Student Exam Execution]
+      summary: Inicia uma tentativa de prova
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+        - $ref: "#/components/parameters/ExamId"
+      responses:
+        "200":
+          description: Tentativa criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamAttempt"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /exam-attempts/{examAttemptId}/answers:
+    post:
+      tags: [Student Exam Execution]
+      summary: Envia respostas de uma tentativa
+      parameters:
+        - name: examAttemptId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitAnswersPayload"
+      responses:
+        "200":
+          description: Respostas salvas e tentativa finalizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmittedExamAttempt"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /exams/{examId}/dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Dashboard de métricas de uma prova
+      parameters:
+        - $ref: "#/components/parameters/ExamId"
+        - name: class_group_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 15
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Métricas e ranking da prova
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExamDashboard"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+components:
+  parameters:
+    ExamId:
+      name: examId
+      in: path
+      required: true
+      schema:
+        type: integer
+    ClassGroupId:
+      name: classGroupId
+      in: path
+      required: true
+      schema:
+        type: integer
+    StudentId:
+      name: studentId
+      in: path
+      required: true
+      schema:
+        type: integer
+  responses:
+    ValidationError:
+      description: Erro de validação/regra de negócio
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Registro não encontrado
+  schemas:
+    ClassGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        code:
+          type: string
+          example: CLASS-A
+        pivot:
+          $ref: "#/components/schemas/ClassGroupExamPivot"
+    ClassGroupExamPivot:
+      type: object
+      description: Presente quando a turma é retornada por relacionamento many-to-many com prova.
+      properties:
+        exam_id:
+          type: integer
+          example: 1
+        class_group_id:
+          type: integer
+          example: 1
+    ExamSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: Avaliação de Matemática
+        questions_count:
+          type: integer
+          example: 4
+        value:
+          type: string
+          example: "10.00"
+    ExamSummaryWithClassGroups:
+      allOf:
+        - $ref: "#/components/schemas/ExamSummary"
+        - type: object
+          properties:
+            class_groups:
+              type: array
+              items:
+                $ref: "#/components/schemas/ClassGroup"
+    ExamDetail:
+      allOf:
+        - $ref: "#/components/schemas/ExamSummaryWithClassGroups"
+        - type: object
+          properties:
+            questions:
+              type: array
+              items:
+                $ref: "#/components/schemas/ExamQuestion"
+    ExamQuestion:
+      type: object
+      properties:
+        id:
+          type: integer
+        exam_id:
+          type: integer
+        statement:
+          type: string
+          example: Quanto é 2 + 2?
+        position:
+          type: integer
+          example: 1
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExamQuestionOption"
+    ExamQuestionOption:
+      type: object
+      properties:
+        id:
+          type: integer
+        exam_question_id:
+          type: integer
+        description:
+          type: string
+          example: "4"
+        is_correct:
+          type: boolean
+          example: true
+    ExamPayload:
+      type: object
+      required: [name, questions_count, value, questions]
+      properties:
+        name:
+          type: string
+          example: Avaliação de Matemática
+        questions_count:
+          type: integer
+          example: 2
+        value:
+          type: number
+          format: float
+          example: 10
+        questions:
+          type: array
+          items:
+            type: object
+            required: [statement, position, options]
+            properties:
+              statement:
+                type: string
+                example: Quanto é 2 + 2?
+              position:
+                type: integer
+                example: 1
+              options:
+                type: array
+                items:
+                  type: object
+                  required: [description, is_correct]
+                  properties:
+                    description:
+                      type: string
+                      example: "4"
+                    is_correct:
+                      type: boolean
+                      example: true
+    StudentExamSummary:
+      allOf:
+        - $ref: "#/components/schemas/ExamSummary"
+        - type: object
+          properties:
+            started_at:
+              type: string
+              nullable: true
+              format: date-time
+            finished_at:
+              type: string
+              nullable: true
+              format: date-time
+            correct_answers_count:
+              type: integer
+              nullable: true
+            score:
+              type: string
+              nullable: true
+              example: "8.50"
+    ExamAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+        exam_id:
+          type: integer
+        student_id:
+          type: integer
+        started_at:
+          type: string
+          nullable: true
+          format: date-time
+        finished_at:
+          type: string
+          nullable: true
+          format: date-time
+        correct_answers_count:
+          type: integer
+          nullable: true
+        score:
+          type: string
+          nullable: true
+          example: "8.50"
+        student:
+          $ref: "#/components/schemas/Student"
+        exam:
+          $ref: "#/components/schemas/StudentExam"
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+          example: Student User
+        class_group_id:
+          type: integer
+    StudentExam:
+      allOf:
+        - $ref: "#/components/schemas/ExamSummary"
+        - type: object
+          properties:
+            questions:
+              type: array
+              items:
+                $ref: "#/components/schemas/StudentExamQuestion"
+    StudentExamQuestion:
+      type: object
+      properties:
+        id:
+          type: integer
+        statement:
+          type: string
+        position:
+          type: integer
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              description:
+                type: string
+    StudentExamAnswer:
+      type: object
+      properties:
+        id:
+          type: integer
+        exam_attempt_id:
+          type: integer
+        exam_question_id:
+          type: integer
+        exam_question_option_id:
+          type: integer
+        exam_question_option:
+          $ref: "#/components/schemas/ExamQuestionOption"
+    SubmitAnswersPayload:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [exam_question_id, exam_question_option_id]
+            properties:
+              exam_question_id:
+                type: integer
+              exam_question_option_id:
+                type: integer
+    SubmittedExamAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+        exam_id:
+          type: integer
+        student_id:
+          type: integer
+        started_at:
+          type: string
+          nullable: true
+          format: date-time
+        finished_at:
+          type: string
+          nullable: true
+          format: date-time
+        correct_answers_count:
+          type: integer
+          nullable: true
+        score:
+          type: string
+          nullable: true
+          example: "10.00"
+        exam:
+          $ref: "#/components/schemas/ExamSummary"
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/StudentExamAnswer"
+    ExamDashboard:
+      type: object
+      properties:
+        requested_at:
+          type: string
+          format: date-time
+        exam:
+          $ref: "#/components/schemas/ExamSummary"
+        filters:
+          type: object
+          properties:
+            class_group_id:
+              type: integer
+              nullable: true
+        average_score:
+          type: number
+          nullable: true
+        top_score:
+          type: string
+          nullable: true
+        top_attempt:
+          allOf:
+            - $ref: "#/components/schemas/DashboardAttempt"
+          nullable: true
+        ranking:
+          type: object
+          description: Estrutura paginada do Laravel.
+    DashboardAttempt:
+      type: object
+      properties:
+        attempt_id:
+          type: integer
+        student:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            class_group:
+              $ref: "#/components/schemas/ClassGroup"
+        correct_answers_count:
+          type: integer
+        score:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: The given data was invalid.
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
