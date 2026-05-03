@@ -227,6 +227,10 @@ function markCorrect (question, selectedIndex) {
 }
 
 async function submitForm () {
+  if (!validateForm()) {
+    return
+  }
+
   saving.value = true
 
   try {
@@ -249,6 +253,62 @@ async function submitForm () {
   } finally {
     saving.value = false
   }
+}
+
+function validateForm () {
+  if (!form.name.trim()) {
+    notifyValidationError('Informe o nome da prova.')
+    return false
+  }
+
+  if (!Number.isInteger(Number(form.questions_count)) || Number(form.questions_count) < 1) {
+    notifyValidationError('Informe uma quantidade válida de questões.')
+    return false
+  }
+
+  if (Number(form.value) < 0 || form.value === '') {
+    notifyValidationError('Informe um valor válido para a prova.')
+    return false
+  }
+
+  if (form.questions.length !== Number(form.questions_count)) {
+    notifyValidationError('A quantidade de questões deve ser igual ao número informado na prova.')
+    return false
+  }
+
+  for (const [questionIndex, question] of form.questions.entries()) {
+    if (!question.statement.trim()) {
+      notifyValidationError(`Preencha o enunciado da questão ${questionIndex + 1}.`)
+      return false
+    }
+
+    if (question.options.length < 2) {
+      notifyValidationError(`A questão ${questionIndex + 1} deve ter pelo menos duas alternativas.`)
+      return false
+    }
+
+    if (question.options.some((option) => !option.description.trim())) {
+      notifyValidationError(`Preencha todas as alternativas da questão ${questionIndex + 1}.`)
+      return false
+    }
+
+    const correctOptionsCount = question.options.filter((option) => option.is_correct).length
+
+    if (correctOptionsCount !== 1) {
+      notifyValidationError(`Marque exatamente uma alternativa correta na questão ${questionIndex + 1}.`)
+      return false
+    }
+  }
+
+  return true
+}
+
+function notifyValidationError (message) {
+  $q.notify({
+    type: 'warning',
+    message,
+    position: 'top'
+  })
 }
 
 async function loadExam () {
