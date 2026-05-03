@@ -41,6 +41,22 @@ export const examsApi = {
   delete: (examId) => api.delete(`/exams/${examId}`)
 }
 
+export const examDashboardApi = {
+  show: (examId, params = {}) => {
+    const query = new URLSearchParams()
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        query.set(key, value)
+      }
+    })
+
+    const queryString = query.toString()
+
+    return api.get(`/exams/${examId}/dashboard${queryString ? `?${queryString}` : ''}`)
+  }
+}
+
 export const classGroupExamsApi = {
   link: (classGroupId, examId) => api.post(`/class-groups/${classGroupId}/exams`, { exam_id: examId }),
   unlink: (classGroupId, examId) => api.delete(`/class-groups/${classGroupId}/exams/${examId}`)
