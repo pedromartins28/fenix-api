@@ -15,11 +15,11 @@
         <div class="score-panel q-mt-lg">
           <div>
             <span>Nota</span>
-            <strong>{{ exam.score ?? 'null' }}</strong>
+            <strong>{{ displayOrSlash(exam.score) }}</strong>
           </div>
           <div>
             <span>Acertos</span>
-            <strong>{{ exam.correct_answers_count ?? 'null' }} / {{ exam.questions_count }}</strong>
+            <strong>{{ displayOrSlash(exam.correct_answers_count) }} / {{ exam.questions_count }}</strong>
           </div>
           <div>
             <span>Aproveitamento</span>
@@ -46,7 +46,7 @@ const errorMessage = ref('')
 
 const accuracyLabel = computed(() => {
   if (!exam.value?.finished_at || exam.value.correct_answers_count === null) {
-    return 'null'
+    return '/'
   }
 
   const percentage = (Number(exam.value.correct_answers_count) / Number(exam.value.questions_count)) * 100
@@ -67,6 +67,10 @@ async function loadResult () {
   } finally {
     loading.value = false
   }
+}
+
+function displayOrSlash (value) {
+  return value ?? '/'
 }
 </script>
 

@@ -27,7 +27,7 @@
           </div>
           <div>
             <span>Nota</span>
-            <strong>{{ exam.score ?? 'null' }}</strong>
+            <strong>{{ displayOrSlash(exam.score) }}</strong>
           </div>
         </div>
       </q-card-section>
@@ -84,6 +84,10 @@ async function loadExam () {
 
 function formatScore (value) {
   return Number(value).toFixed(2)
+}
+
+function displayOrSlash (value) {
+  return value ?? '/'
 }
 </script>
 

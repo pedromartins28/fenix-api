@@ -55,21 +55,21 @@
         <q-card flat bordered class="metric-card">
           <q-card-section>
             <span>Média geral</span>
-            <strong>{{ dashboard.average_score ?? 'null' }}</strong>
+            <strong>{{ displayOrSlash(dashboard.average_score) }}</strong>
           </q-card-section>
         </q-card>
 
         <q-card flat bordered class="metric-card">
           <q-card-section>
             <span>Melhor pontuação</span>
-            <strong>{{ dashboard.top_score ?? 'null' }}</strong>
+            <strong>{{ displayOrSlash(dashboard.top_score) }}</strong>
           </q-card-section>
         </q-card>
 
         <q-card flat bordered class="metric-card">
           <q-card-section>
             <span>Top 1</span>
-            <strong>{{ dashboard.top_attempt?.student?.name || 'null' }}</strong>
+            <strong>{{ dashboard.top_attempt?.student?.name || '/' }}</strong>
             <small v-if="dashboard.top_attempt">
               {{ dashboard.top_attempt.correct_answers_count }} acertos
             </small>
@@ -217,10 +217,14 @@ function goToFirstPage () {
 
 function formatDate (value) {
   if (!value) {
-    return 'null'
+    return '/'
   }
 
   return new Date(value).toLocaleString('pt-BR')
+}
+
+function displayOrSlash (value) {
+  return value ?? '/'
 }
 </script>
 

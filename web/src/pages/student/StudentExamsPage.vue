@@ -36,10 +36,10 @@
             </div>
             <div>
               <span>Nota</span>
-              <strong>{{ exam.score ?? 'null' }}</strong>
+              <strong>{{ displayOrSlash(exam.score) }}</strong>
             </div>
             <div>
-              <span>Acerto</span>
+              <span>Percentual</span>
               <strong>{{ accuracyLabel(exam) }}</strong>
             </div>
           </div>
@@ -116,12 +116,16 @@ function statusMeta (exam) {
 
 function accuracyLabel (exam) {
   if (!exam.finished_at || exam.correct_answers_count === null) {
-    return 'null'
+    return '/'
   }
 
   const percentage = (Number(exam.correct_answers_count) / Number(exam.questions_count)) * 100
 
   return `${percentage.toFixed(0)}%`
+}
+
+function displayOrSlash (value) {
+  return value ?? '/'
 }
 
 function formatScore (value) {
