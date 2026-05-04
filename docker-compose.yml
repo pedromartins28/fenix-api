@@ -24,6 +24,7 @@ services:
     container_name: fenix_api
     volumes:
       - ./api:/var/www
+      - /var/www/vendor
     ports:
       - "8000:8000"
     depends_on:
