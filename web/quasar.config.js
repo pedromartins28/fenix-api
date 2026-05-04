@@ -73,7 +73,13 @@ export default defineConfig((/* ctx */) => {
     devServer: {
       host: '0.0.0.0',
       port: 9000,
-      open: false
+      open: false,
+      proxy: {
+        '/api': {
+          target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:8000',
+          changeOrigin: true
+        }
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

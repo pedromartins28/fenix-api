@@ -22,21 +22,10 @@ O projeto possui:
 cp api/.env.example api/.env
 ```
 
-2. Confira se o arquivo `api/.env` está com os valores do Docker:
+2. Copie o arquivo de variáveis do front:
 
-```env
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=pgsql
-DB_HOST=db
-DB_PORT=5432
-DB_DATABASE=fenix
-DB_USERNAME=admin
-DB_PASSWORD=fenix
-
-REDIS_CLIENT=phpredis
-REDIS_HOST=redis
-REDIS_PORT=6379
+```bash
+cp web/.env.example web/.env
 ```
 
 3. Suba os containers:
