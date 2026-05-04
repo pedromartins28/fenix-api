@@ -72,6 +72,15 @@ O seeder cria:
   - `student2@gmail.com`
   - `student3@gmail.com`
   - senha: `student123`
+- Provas:
+  - `Prova de Matemática`: vinculada à `CLASS-A`.
+  - `Prova de Ciências`: vinculada à `CLASS-A` e `CLASS-B`.
+- Questões:
+  - Cada prova possui 3 questões.
+  - Cada questão possui 2 alternativas.
+- Tentativas finalizadas:
+  - `Prova de Matemática`: respostas dos alunos `student@gmail.com` e `student2@gmail.com`.
+  - `Prova de Ciências`: respostas dos alunos `student2@gmail.com` e `student3@gmail.com`.
 
 Observação: não há fluxo de login. O front usa IDs fixos para simular os acessos.
 
