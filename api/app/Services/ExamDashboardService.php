@@ -103,7 +103,7 @@ class ExamDashboardService
 
         if (! $isAvailable) {
             throw ValidationException::withMessages([
-                'class_group_id' => 'This exam is not available for the selected class group.',
+                'class_group_id' => 'Esta prova não está disponível para a turma selecionada.',
             ]);
         }
     }

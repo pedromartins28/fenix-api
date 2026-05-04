@@ -63,7 +63,7 @@ class ExamExecutionService
 
         if ($student->examAttempts()->where('exam_id', $exam->id)->exists()) {
             throw ValidationException::withMessages([
-                'exam_id' => 'This student has already started this exam.',
+                'exam_id' => 'Este aluno já iniciou esta prova.',
             ]);
         }
 
@@ -88,7 +88,7 @@ class ExamExecutionService
 
         if ($attempt === null) {
             throw ValidationException::withMessages([
-                'exam_id' => 'This student must start an attempt before seeing the exam questions.',
+                'exam_id' => 'O aluno precisa iniciar a tentativa antes de visualizar as questões da prova.',
             ]);
         }
 
@@ -102,7 +102,7 @@ class ExamExecutionService
     {
         if ($examAttempt->finished_at !== null || $examAttempt->answers()->exists()) {
             throw ValidationException::withMessages([
-                'answers' => 'Answers have already been submitted for this attempt.',
+                'answers' => 'As respostas desta tentativa já foram enviadas.',
             ]);
         }
 
@@ -111,7 +111,7 @@ class ExamExecutionService
 
         if ($questions->count() !== count($answers)) {
             throw ValidationException::withMessages([
-                'answers' => 'The number of answers must match the number of exam questions.',
+                'answers' => 'A quantidade de respostas deve ser igual à quantidade de questões da prova.',
             ]);
         }
 
@@ -124,7 +124,7 @@ class ExamExecutionService
 
                 if ($question === null) {
                     throw ValidationException::withMessages([
-                        'answers' => 'All answered questions must belong to this exam.',
+                        'answers' => 'Todas as questões respondidas devem pertencer a esta prova.',
                     ]);
                 }
 
@@ -135,7 +135,7 @@ class ExamExecutionService
 
                 if ($option === null) {
                     throw ValidationException::withMessages([
-                        'answers' => 'Each selected option must belong to its question.',
+                        'answers' => 'Cada alternativa selecionada deve pertencer à sua questão.',
                     ]);
                 }
 
@@ -171,7 +171,7 @@ class ExamExecutionService
 
         if (! $isAvailable) {
             throw ValidationException::withMessages([
-                'exam_id' => 'This exam is not available for the student class group.',
+                'exam_id' => 'Esta prova não está disponível para a turma do aluno.',
             ]);
         }
     }

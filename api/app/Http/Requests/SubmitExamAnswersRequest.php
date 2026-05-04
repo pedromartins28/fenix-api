@@ -19,4 +19,20 @@ class SubmitExamAnswersRequest extends FormRequest
             'answers.*.exam_question_option_id' => ['required', 'integer', 'exists:exam_question_options,id'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'answers.required' => 'Envie as respostas da prova.',
+            'answers.array' => 'As respostas devem ser enviadas em formato válido.',
+            'answers.min' => 'Envie pelo menos uma resposta.',
+            'answers.*.exam_question_id.required' => 'Informe a questão de todas as respostas.',
+            'answers.*.exam_question_id.integer' => 'A questão informada deve ser válida.',
+            'answers.*.exam_question_id.distinct' => 'Cada questão deve ser respondida apenas uma vez.',
+            'answers.*.exam_question_id.exists' => 'Uma das questões informadas não foi encontrada.',
+            'answers.*.exam_question_option_id.required' => 'Informe a alternativa escolhida em todas as respostas.',
+            'answers.*.exam_question_option_id.integer' => 'A alternativa informada deve ser válida.',
+            'answers.*.exam_question_option_id.exists' => 'Uma das alternativas informadas não foi encontrada.',
+        ];
+    }
 }

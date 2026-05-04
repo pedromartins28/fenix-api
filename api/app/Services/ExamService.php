@@ -70,7 +70,7 @@ class ExamService
         }
 
         throw ValidationException::withMessages([
-            'exam' => 'This test has already been attempted by students and cannot be changed.',
+            'exam' => 'Esta prova já possui tentativas de alunos e não pode ser editada ou excluída.',
         ]);
     }
 
@@ -78,7 +78,7 @@ class ExamService
     {
         if ((int) $data['questions_count'] !== count($data['questions'])) {
             throw ValidationException::withMessages([
-                'questions' => 'The number of questions must match questions_count.',
+                'questions' => 'A quantidade de questões deve ser igual ao número informado na prova.',
             ]);
         }
 
@@ -90,7 +90,7 @@ class ExamService
 
             if (count($correctOptions) !== 1) {
                 throw ValidationException::withMessages([
-                    "questions.$index.options" => 'Each question must have exactly one correct option.',
+                    "questions.$index.options" => 'Cada questão deve ter exatamente uma alternativa correta.',
                 ]);
             }
         }

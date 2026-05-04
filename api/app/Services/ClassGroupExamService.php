@@ -19,7 +19,7 @@ class ClassGroupExamService
     {
         if ($classGroup->exams()->whereKey($examId)->exists()) {
             throw ValidationException::withMessages([
-                'exam_id' => 'This exam is already linked to this class group.',
+                'exam_id' => 'Esta prova já está vinculada a esta turma.',
             ]);
         }
 
@@ -34,7 +34,7 @@ class ClassGroupExamService
             $query->where('class_group_id', $classGroup->id);
         })->exists()) {
             throw ValidationException::withMessages([
-                'exam_id' => 'This exam has already been attempted by students of this class.',
+                'exam_id' => 'Esta prova já possui tentativas de alunos desta turma e não pode ser desvinculada.',
             ]);
         }
 
